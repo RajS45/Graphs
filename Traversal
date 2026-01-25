@@ -1,0 +1,104 @@
+BFS ans DFS Traversal. 
+import java.util.*;
+
+class Solution {
+
+    private void dfs(int node, List<List<Integer>> adj, boolean[] vis, List<Integer> ans) {
+        vis[node] = true;
+        ans.add(node);
+
+        // Normal for loop
+        List<Integer> neighbors = adj.get(node);
+        for (int j = 0; j < neighbors.size(); j++) {
+            int neighbor = neighbors.get(j);
+            if (!vis[neighbor]) {
+                dfs(neighbor, adj, vis, ans);
+            }
+        }
+    }
+
+    public List<Integer> dfsOfGraph(int V, List<List<Integer>> adj) {
+        boolean[] vis = new boolean[V];
+        List<Integer> ans = new ArrayList<>();
+
+        for (int i = 0; i < V; i++) {
+            if (!vis[i]) {
+                dfs(i, adj, vis, ans);
+            }
+        }
+
+        return ans;
+    }
+
+    private void bfs(int node, List<List<Integer>> adj, boolean[] vis, List<Integer> ans) {
+        Queue<Integer> q = new LinkedList<>();
+        q.add(node);
+        vis[node] = true;
+
+        while (!q.isEmpty()) {
+            int current = q.poll();
+            ans.add(current);
+
+            // Normal for loop
+            List<Integer> neighbors = adj.get(current);
+            for (int j = 0; j < neighbors.size(); j++) {
+                int neighbor = neighbors.get(j);
+                if (!vis[neighbor]) {
+                    vis[neighbor] = true;
+                    q.add(neighbor);
+                }
+            }
+        }
+    }
+
+    public List<Integer> bfsOfGraph(int V, List<List<Integer>> adj) {
+        boolean[] vis = new boolean[V];
+        List<Integer> ans = new ArrayList<>();
+
+        for (int i = 0; i < V; i++) {
+            if (!vis[i]) {
+                bfs(i, adj, vis, ans);
+            }
+        }
+
+        return ans;
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // Input number of vertices and edges
+        System.out.print("Enter number of vertices: ");
+        int V = sc.nextInt();
+
+        System.out.print("Enter number of edges: ");
+        int E = sc.nextInt();
+
+        // Initialize adjacency list
+        List<List<Integer>> adj = new ArrayList<>();
+        for (int i = 0; i < V; i++) {
+            adj.add(new ArrayList<>());
+        }
+
+        // Input edges
+        System.out.println("Enter edges (u v):");
+        for (int i = 0; i < E; i++) {
+            int u = sc.nextInt();
+            int v = sc.nextInt();
+            adj.get(u).add(v);
+            adj.get(v).add(u); // undirected graph
+        }
+
+        Solution sol = new Solution();
+
+        List<Integer> bfs = sol.bfsOfGraph(V, adj);
+        List<Integer> dfs = sol.dfsOfGraph(V, adj);
+
+        System.out.println("The BFS traversal of the given graph is: " + bfs);
+        System.out.println("The DFS traversal of the given graph is: " + dfs);
+
+        sc.close();
+    }
+}
