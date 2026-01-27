@@ -103,6 +103,63 @@ class Main {
     }
 }
 2.Connected Components.
+import java.util.*;
+class Solution {
+    private static void bfs(int node, List<List<Integer>> adj, boolean[] vis) {
+        Queue<Integer> q = new LinkedList<>();
+        q.add(node);
+        vis[node] = true;
+        while (!q.isEmpty()) {
+            int curr = q.poll();
+            List<Integer> neighbors = adj.get(curr);
+            for (int i = 0; i < neighbors.size(); i++) {
+                int neighbor = neighbors.get(i);
+                if (!vis[neighbor]) {
+                    vis[neighbor] = true;
+                    q.add(neighbor);
+                }
+            }
+        }
+    }
+    public static int findNumberOfComponent(int V, List<List<Integer>> edges) {
+        List<List<Integer>> adjLs = new ArrayList<>();
+        for (int i = 0; i < V; i++) {
+            adjLs.add(new ArrayList<>());
+        }
+        for (int i = 0; i < edges.size(); i++) {
+            int u = edges.get(i).get(0);
+            int v = edges.get(i).get(1);
+            adjLs.get(u).add(v);
+            adjLs.get(v).add(u);
+        }
+        boolean[] vis = new boolean[V];
+        int cnt = 0;
+        for (int i = 0; i < V; i++) {
+            if (!vis[i]) {
+                cnt++;
+                bfs(i, adjLs, vis);
+            }
+        }
+        return cnt;
+    }
+    public static void main(String []args){
+        Scanner sc = new Scanner(System.in);
+        int V = sc.nextInt();
+        int E = sc.nextInt();
+        List<List<Integer>>edges = new ArrayList<>();
+        for(int i=0;i<E;i++){
+            int u = sc.nextInt();
+            int v = sc.nextInt();
+            List<Integer>edge = new ArrayList<>();
+            edge.add(u);
+            edge.add(v);
+            edges.add(edge);
+        }
+        int res = findNumberOfComponent(V , edges);
+        System.out.println(res);
+    }
+}
+
 3.Number of Provinces.
 class Solution {
     public int numProvinces(int[][] adj) {
