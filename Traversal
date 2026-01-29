@@ -1,7 +1,6 @@
 BFS ans DFS Traversal. 
 import java.util.*;
 class Solution {
-
     private void dfs(int node, List<List<Integer>> adj, boolean[] vis, List<Integer> ans) {
         vis[node] = true;
         ans.add(node);
