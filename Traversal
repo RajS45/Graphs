@@ -352,3 +352,99 @@ class Solution {
         sc.close();
     }
 }
+Rotten Oranges.
+class Solution {
+    private int[] delRow = {-1, 0, 1, 0};
+    private int[] delCol = {0, 1, 0, -1};    
+    private boolean isValid(int i, int j, int n, int m) {
+        return !(i < 0 || i >= n || j < 0 || j >= m);
+    }    
+    private int bfs(int[][] grid, Queue<int[]> q, int freshCount) {
+        int n = grid.length;
+        int m = grid[0].length;
+        int time = 0;
+        int rottenCount = 0;     
+        while(!q.isEmpty()) {
+            int[] cell = q.poll();
+            int row = cell[0];
+            int col = cell[1];
+            int t   = cell[2];
+            time = Math.max(time, t);
+            for(int k=0; k<4; k++) {
+                int nRow = row + delRow[k];
+                int nCol = col + delCol[k];
+                if(isValid(nRow, nCol, n, m) && grid[nRow][nCol] == 1) {
+                    grid[nRow][nCol] = 2; 
+                    rottenCount++;
+                    q.add(new int[]{nRow, nCol, t+1});
+                }
+            }
+        }
+        return (rottenCount == freshCount) ? time : -1;
+    }    
+    public int orangesRotting(int[][] grid) {
+        int n = grid.length;
+        int m = grid[0].length;
+        Queue<int[]> q = new LinkedList<>();
+        int freshCount = 0;
+        for(int i=0; i<n; i++) {
+            for(int j=0; j<m; j++) {
+                if(grid[i][j] == 2) {
+                    q.add(new int[]{i, j, 0}); 
+                }
+                if(grid[i][j] == 1) {
+                    freshCount++;
+                }
+            }
+        }   
+        return bfs(grid, q, freshCount);
+    }
+}
+Distance of nearest cell having one.
+class Solution {
+    int[] delRow = {-1, 0, 1, 0};
+    int[] delCol = {0, 1, 0, -1}; 
+    public boolean isValid(int i, int j, int n, int m) {
+        if (i < 0 || i >= n) return false;
+        if (j < 0 || j >= m) return false;
+        return true;
+    }
+    public void bfs(int [][]grid , int[][] vis , int [][]dist){
+        int n = grid.length;
+        int m = grid[0].length;
+        Queue<int[]> q = new LinkedList<>();
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(grid[i][j] == 1){
+                    q.add(new int[]{i, j, 0});
+                    vis[i][j] = 1;
+                    dist[i][j] = 0;
+                }
+            }
+        }
+        while(!q.isEmpty()){
+            int []cell = q.poll();
+            int row = cell[0];
+            int col = cell[1];
+            int d = cell[2];
+
+            for(int i=0;i<4;i++){
+                int nrow = delRow[i] + row;
+                int ncol = delCol[i] + col;
+                if(isValid(nrow, ncol, n, m) && vis[nrow][ncol] == 0){
+                    vis[nrow][ncol] = 1;
+                    dist[nrow][ncol] = d + 1;
+                    q.add(new int[]{nrow, ncol, d+1});
+                }
+            }
+        }
+    }
+    public int[][] nearest(int[][] grid) {
+        int n = grid.length;
+        int m = grid[0].length;
+        int[][] vis = new int[n][m];
+        int[][] dist = new int[n][m];
+        bfs(grid, vis, dist);
+        return dist;
+    }
+}
