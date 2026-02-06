@@ -500,3 +500,38 @@ class Solution {
         }
     }
 }
+Number of distinct isLand.
+class Solution {
+    private int[] delRow = {-1, 0, 1, 0};
+    private int[] delCol = {0, -1, 0, 1};
+    private boolean isValid(int i, int j, int n, int m) {
+        return i >= 0 && j >= 0 && i < n && j < m;
+    }
+    private void dfs(int row, int col, int[][] grid, int baseRow, int baseCol, StringBuilder shape) {
+        int n = grid.length;
+        int m = grid[0].length;
+        grid[row][col] = 0;
+        shape.append((row - baseRow) + "," + (col - baseCol) + " ");
+        for (int d = 0; d < 4; d++) {
+            int nRow = row + delRow[d];
+            int nCol = col + delCol[d];
+            if (isValid(nRow, nCol, n, m) && grid[nRow][nCol] == 1) {
+                dfs(nRow, nCol, grid, baseRow, baseCol, shape);
+            }
+        }
+    }
+    public int countDistinctIslands(int[][] grid) {
+        int n = grid.length, m = grid[0].length;
+        Set<String> shapes = new HashSet<>();
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i][j] == 1) {
+                    StringBuilder shape = new StringBuilder();
+                    dfs(i, j, grid, i, j, shape);
+                    shapes.add(shape.toString());
+                }
+            }
+        }
+        return shapes.size();
+    }
+}
