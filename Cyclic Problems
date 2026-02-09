@@ -1,0 +1,31 @@
+Detect a cycle in a undirected graph.
+class Solution {
+    public boolean bfs(int src, List<Integer>[] adj, boolean[] vis) {
+        Queue<int[]> q = new LinkedList<>();
+        q.add(new int[]{src, -1});
+        vis[src] = true;        
+        while (!q.isEmpty()) {
+            int[] cell = q.poll();
+            int node = cell[0];
+            int parent = cell[1];           
+            for (int neighbour : adj[node]) {
+                if (!vis[neighbour]) {
+                    vis[neighbour] = true;
+                    q.add(new int[]{neighbour, node});
+                } else if (neighbour != parent) {
+                    return true; 
+                }
+            }
+        }
+        return false;
+    }
+    public boolean isCycle(int V, List<Integer>[] adj) {
+        boolean[] vis = new boolean[V];
+        for (int i = 0; i < V; i++) {
+            if (!vis[i]) {
+                if (bfs(i, adj, vis)) return true;
+            }
+        }
+        return false;
+    }
+}
