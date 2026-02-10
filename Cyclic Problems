@@ -58,3 +58,149 @@ class Solution {
         return false;
     }
 }
+2.Bipartite Graph.
+Using DFS.
+class Solution {
+    public boolean dfs(int src, int[] color, List<List<Integer>> adj) {
+        List<Integer> neighbours = adj.get(src);
+        for (int i = 0; i < neighbours.size(); i++) {
+            int neighbour = neighbours.get(i);
+            if (color[neighbour] == -1) {
+                // Assign opposite color
+                color[neighbour] = 1 - color[src];
+                if (!dfs(neighbour, color, adj)) {
+                    return false;
+                }
+            } else if (color[neighbour] == color[src]) {
+                // Same color as src → not bipartite
+                return false;
+            }
+        }
+        return true;
+    }
+    public boolean isBipartite(int V, List<List<Integer>> adj) {
+        int[] color = new int[V];
+        Arrays.fill(color, -1);
+        for (int i = 0; i < V; i++) {
+            if (color[i] == -1) {
+                if (!dfs(i, color, adj)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+}
+Using BFS.
+class Solution {
+    public boolean bfs(int src , int[]color , List<List<Integer>>adj , int V){
+        Queue<Integer>q=  new LinkedList<>();
+        q.add(src);
+        color[src] = 0;
+        while(!q.isEmpty()){
+            int curr = q.poll();
+            List<Integer>neighbours = adj.get(curr);
+            for(int i=0;i<neighbours.size();i++){
+                int neighbour = neighbours.get(i);
+                if(color[neighbour] == -1){
+                    color[neighbour] = 1 - color[curr];
+                    q.add(neighbour);
+                }
+                else if(color[neighbour] == color[curr]){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    public boolean isBipartite(int V, List<List<Integer>> adj) {
+      int []color= new int[V];
+      Arrays.fill(color , -1);
+      for(int i=0;i<V;i++){
+        if(color[i] == -1){
+            if(!bfs(i , color , adj , V)){
+                return false;
+            }
+        }
+      }
+      return true;
+    }
+}
+3.Topological sort or Kahn's algorithm
+Using BFS.
+class Solution {
+    public int[] bfsTopo(int V, List<List<Integer>> adj) {
+        int[] inDegree = new int[V];
+        // Step 1-Calculate indegree of each node
+        for (int i = 0; i < V; i++) {
+            List<Integer> neighbours = adj.get(i);
+            for (int j = 0; j < neighbours.size(); j++) {
+                int neighbour = neighbours.get(j);
+                inDegree[neighbour]++;
+            }
+        }
+        // Step 2-Push nodes with indegree 0 into queue
+        Queue<Integer> q = new LinkedList<>();
+        for (int i = 0; i < V; i++) {
+            if (inDegree[i] == 0) {
+                q.add(i);
+            }
+        }
+        int[] ans = new int[V];
+        int ind = 0;
+        while (!q.isEmpty()) {
+            int curr = q.poll();
+            ans[ind++] = curr;
+            List<Integer> neighbours = adj.get(curr);
+            for (int j = 0; j < neighbours.size(); j++) {
+                int neighbour = neighbours.get(j);
+                inDegree[neighbour]--;
+                if (inDegree[neighbour] == 0) {
+                    q.add(neighbour);
+                }
+            }
+        }
+        return ans;
+    }
+    public int[] topoSort(int V, List<List<Integer>> adj) {
+        return bfsTopo(V, adj);
+    }
+}
+Using DFS.
+class Solution {
+    public void dfs(int node, List<List<Integer>> adj, boolean[] vis, Stack<Integer> st) {
+        vis[node] = true;
+
+        List<Integer> neighbours = adj.get(node);
+        for (int j = 0; j < neighbours.size(); j++) {
+            int neighbour = neighbours.get(j);
+            if (!vis[neighbour]) {
+                dfs(neighbour, adj, vis, st);
+            }
+        }
+
+        // push after visiting all neighbours
+        st.push(node);
+    }
+
+    public int[] topoSort(int V, List<List<Integer>> adj) {
+        boolean[] vis = new boolean[V];
+        Stack<Integer> st = new Stack<>();
+
+        // run DFS for all unvisited nodes
+        for (int i = 0; i < V; i++) {
+            if (!vis[i]) {
+                dfs(i, adj, vis, st);
+            }
+        }
+
+        // build result array
+        int[] ans = new int[V];
+        int ind = 0;
+        while (!st.isEmpty()) {
+            ans[ind++] = st.pop();
+        }
+
+        return ans;
+    }
+}
