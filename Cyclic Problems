@@ -238,3 +238,56 @@ class Solution {
         return topo.size() < V;
     }
 }
+Find the eventual safe state .
+import java.util.*;
+class Solution {
+    public List<Integer> eventualSafeNodes(int[][] graph) {
+        int n = graph.length;
+        // Reverse graph
+        List<List<Integer>> revAdj = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            revAdj.add(new ArrayList<>());
+        }
+        int[] indegree = new int[n];
+        // Build reverse graph and indegree
+        for (int i = 0; i < n; i++) {
+            indegree[i] = graph[i].length; // outdegree
+            for (int j = 0; j < graph[i].length; j++) {
+                int neighbour = graph[i][j];
+                revAdj.get(neighbour).add(i);
+            }
+        }
+        // Queue for BFS
+        Queue<Integer> q = new LinkedList<>();
+        // Add terminal nodes (outdegree = 0)
+        for (int i = 0; i < n; i++) {
+            if (indegree[i] == 0) {
+                q.offer(i);
+            }
+        }
+        boolean[] safe = new boolean[n];
+        // BFS
+        while (!q.isEmpty()) {
+            int node = q.poll();
+            safe[node] = true;
+            List<Integer> neighbours = revAdj.get(node);
+            for (int i = 0; i < neighbours.size(); i++) {
+
+                int prev = neighbours.get(i);
+                indegree[prev]--;
+
+                if (indegree[prev] == 0) {
+                    q.offer(prev);
+                }
+            }
+        }
+        // Collect result
+        List<Integer> ans = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            if (safe[i]) {
+                ans.add(i);
+            }
+        }
+        return ans;
+    }
+}
