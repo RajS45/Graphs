@@ -382,3 +382,44 @@ class Solution {
         return 0;        
     }
 }
+-->> Shortest path from  source node to every node in undirected graph.
+import java.util.*;
+class Solution {
+    public void bfs(int node, List<Integer>[] adj, int[] dist) {
+        Queue<Integer> q = new LinkedList<>();
+        q.add(node);
+        dist[node] = 0;
+        while (!q.isEmpty()) {
+            int curr = q.poll();
+            List<Integer> neighbours = adj[curr];
+            for (int i = 0; i < neighbours.size(); i++) {
+                int neighbour = neighbours.get(i);
+                if (dist[curr] + 1 < dist[neighbour]) {
+                    dist[neighbour] = dist[curr] + 1;
+                    q.add(neighbour);
+                }
+            }
+        }
+    }
+    public int[] shortestPath(int[][] edges, int N, int M) {
+        List<Integer>[] adj = new ArrayList[N];
+        for (int i = 0; i < N; i++) {
+            adj[i] = new ArrayList<>();
+        }
+        for (int i = 0; i < M; i++) {
+            int u = edges[i][0];
+            int v = edges[i][1];
+            adj[u].add(v);
+            adj[v].add(u);
+        }
+        int[] dist = new int[N];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        bfs(0, adj, dist);
+        for (int i = 0; i < N; i++) {
+            if (dist[i] == Integer.MAX_VALUE) {
+                dist[i] = -1;
+            }
+        }
+        return dist;
+    }
+}
