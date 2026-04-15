@@ -1,0 +1,56 @@
+-->> Cheapest Flight with K stops.
+import java.util.*;
+class Solution {
+    public int CheapestFlight(int n, int[][] flights, int src, int dst, int K) {
+        List<List<int[]>> adj = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            adj.add(new ArrayList<>());
+        }
+        for (int i = 0; i < flights.length; i++) {
+            int u = flights[i][0];
+            int v = flights[i][1];
+            int wt = flights[i][2];
+            adj.get(u).add(new int[]{v, wt});
+        }
+        int[] dist = new int[n];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        Queue<int[]> q = new LinkedList<>();
+        q.add(new int[]{0, src, 0});
+        dist[src] = 0;
+        while (!q.isEmpty()) {
+            int[] curr = q.poll();
+            int stops = curr[0];
+            int node = curr[1];
+            int d = curr[2];
+            if (stops > K) continue;
+            List<int[]> neighbours = adj.get(node);
+            for (int i = 0; i < neighbours.size(); i++) {
+                int[] neighbour = neighbours.get(i);
+                int adjNode = neighbour[0];
+                int edWt = neighbour[1];
+                if (d + edWt < dist[adjNode] && stops <= K) {
+                    dist[adjNode] = d + edWt;
+                    q.add(new int[]{stops + 1, adjNode, d + edWt});
+                }
+            }
+        }
+
+        return dist[dst] == Integer.MAX_VALUE ? -1 : dist[dst];
+    }
+    public static void main(String[]args){
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[][] flights = new int[n][n];
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                flights[i][j] = sc.nextInt();
+            }
+        }
+        int src = sc.nextInt();
+        int dst = sc.nextInt();
+        int k = sc.nextInt();
+        Solution sol = new Solution();
+        int res = sol.CheapestFlight(n , flights , src , dst , k);
+        System.out.println(res);
+    }
+}
